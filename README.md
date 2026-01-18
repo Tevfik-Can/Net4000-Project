@@ -39,3 +39,7 @@ ssh -T git@github.com
 git push -u origin main
 git status
 ```
+
+For eBPF:
+https://www.srodi.com/posts/how-to-write-and-run-an-ebpf-program-on-linux/
+Note: Python can be used instead of Go for the user-space application
