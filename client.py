@@ -10,17 +10,6 @@ SERVER_URL = "http://127.0.0.1:8080"
 REQUEST_INTERVAL_MS = 100
 TIMEOUT_MS = 500
 
-OUTPUT_FILE = "client_metrics.csv"
-
-with open(OUTPUT_FILE, "w", newline="") as f:
-    writer = csv.writer(f)
-    writer.writerow([
-        "request_id",
-        "start_time",
-        "end_time",
-        "latency_ms",
-        "result"
-    ])
 metrics = []
 request_id = 0
 
