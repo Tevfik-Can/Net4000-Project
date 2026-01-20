@@ -18,3 +18,8 @@ requests>=2.31.0
 matplotlib>=3.7.0
 pandas>=2.0.0
 numpy>=1.24.0
+
+
+
+# VM for download:
+https://drive.google.com/drive/folders/1RF5JRG1DJLXjseNQS9AUgnmlyvlN5KDK?usp=sharing
