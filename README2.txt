@@ -7,7 +7,7 @@ pip install -r requirements.txt
 
 # Run cross-layer test
 cd analysis
-python3 simple_test.py
+sudo python3 simple_test.py
 
 
 # Project Structure
