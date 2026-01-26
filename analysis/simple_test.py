@@ -26,7 +26,7 @@ HTTPServer(("0.0.0.0", 8080), Handler).serve_forever()
 def run_ebpf_monitor(duration=15):
     """Run eBPF monitor"""
     cmd = ['sudo', 'timeout', str(duration), 'tcpconnect-bpfcc', '-t']
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True)
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     time.sleep(2)  # Let it start
     return proc
 
@@ -75,12 +75,12 @@ def main():
     
     # Collect eBPF output
     print("4. Collecting eBPF data...")
-    ebpf_output, _ = ebpf.communicate()
+    ebpf_output, ebpf_err  = ebpf.communicate()
     ebpf_events = []
     for line in ebpf_output.split('\n'):
         if line.strip() and 'TIME(s)' not in line:
             ebpf_events.append({'data': line.strip()})
-    
+    print(ebpf_err.strip() or "(empty)")
     # Stop server
     print("5. Stopping server...")
     server.terminate()
