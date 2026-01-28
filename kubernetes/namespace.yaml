@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cross-layer-observability
+  labels:
+    name: cross-layer-observability
+    purpose: research

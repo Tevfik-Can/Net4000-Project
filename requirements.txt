@@ -1,0 +1,30 @@
+# Core dependencies
+requests>=2.31.0
+
+# Data analysis
+pandas>=2.0.0
+numpy>=1.24.0
+matplotlib>=3.7.0
+seaborn>=0.12.0
+
+# Observability
+opentelemetry-api>=1.20.0
+opentelemetry-sdk>=1.20.0
+opentelemetry-instrumentation-requests>=0.41b0
+prometheus-client>=0.17.0
+
+# Testing
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+
+# Configuration
+pyyaml>=6.0
+
+# Utilities
+python-dateutil>=2.8.2
+pytz>=2023.3
+
+# NOTE: BCC (BPF Compiler Collection) must be installed via system packages:
+# Ubuntu/Debian: sudo apt-get install bpfcc-tools libbpfcc python3-bpfcc
+# CentOS/RHEL:   sudo yum install bcc-tools python3-bcc
+# The python3-bpfcc package provides the Python bindings
