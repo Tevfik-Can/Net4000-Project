@@ -33,7 +33,7 @@ cross-layer-observability/
 - **correlator.py**: Correlates kernel + app events
 - **analyzer.py**: Statistical analysis and blind spot detection
 
-## Quick Start
+## Quick Start (vscode WSL terminal + docker desktop)
 
 1. cd to project root after download  
 
