@@ -35,81 +35,49 @@ cross-layer-observability/
 
 ## Quick Start
 
-### Prerequisites
-- Python 3.8+
-- BCC (BPF Compiler Collection)
-- Docker & Docker Compose
-- Kubernetes cluster (for production deployment)
+1. cd to project root after download  
 
-### Local Development
+# 2. Setup Python environment  
+chmod +x scripts/setup_env.sh  
+./scripts/setup_env.sh  
+source venv/bin/activate  
 
-```bash
-# Install dependencies
-pip install -r requirements.txt
+# 3. Install BCC tools  
+sudo apt-get install -y bpfcc-tools libbpfcc python3-bpfcc  
 
-# Run baseline (single-layer) test
-./scripts/run_baseline.sh
+# Build (from project root)  
+docker build -t cross-layer-observability/ebpf:latest -f docker/Dockerfile.ebpf .  
+docker build -t cross-layer-observability/app:latest -f docker/Dockerfile.app .  
 
-# Run cross-layer monitoring test
-./scripts/run_cross_layer.sh
+# Run  
+cd docker  
+docker-compose up  
 
-# Analyze results
-python src/correlation/analyzer.py --baseline results/baseline/ --cross-layer results/cross_layer/
-```
+Cross Layer commands:  
 
-### Docker Deployment
+sudo python3 tests/integration/test_cross_layer.py --requests 100  
 
-```bash
-cd docker
-docker-compose up
-```
+python3 src/correlation/correlator.py \  
+    --app-metrics ./results/cross_layer/app_metrics.json \  
+    --ebpf-events ./results/cross_layer/ebpf_events.json \  
+    --output ./results/cross_layer/correlations.json  
 
-### Kubernetes Deployment
+python3 analyzer.py \  
+    --correlations ./results/cross_layer/correlations.json \  
+    --output ./results/cross_layer/performance_report.json  
 
-```bash
-kubectl apply -f kubernetes/namespace.yaml
-kubectl apply -f kubernetes/
-```
 
-## Research Methodology
+Compare to baseline:   
+python3 src/application/client.py \  
+    --url http://localhost:8080 \  
+    --requests 100 \  
+    --output ./results/baseline/app_only.json  
 
-1. **Baseline Collection**: Traditional application-only monitoring
-2. **eBPF Telemetry**: Kernel-level network event capture
-3. **Cross-Layer Correlation**: Combine both data sources
-4. **Comparative Analysis**: Measure improvements in:
-   - Diagnostic accuracy
-   - Fault detection speed
-   - Blind spot identification
 
-## Metrics Tracked
+python3 analyzer.py \  
+    --correlations ./results/cross_layer/correlations.json \  
+    --baseline ./results/baseline/app_only.json \  
+    --output ./results/comparison_report.json  
 
-### Application Layer
-- Request latency (p50, p95, p99)
-- Error rates
-- Throughput (requests/sec)
 
-### Kernel Layer (eBPF)
-- TCP connection events
-- Packet send/receive events
-- Connection close events
-- Retransmission events
 
-### Cross-Layer Insights
-- Kernel delays not visible at app layer
-- Silent failures detected only by eBPF
-- Correlation between kernel congestion and app latency
-
-## Results & Analysis
-
-Results are stored in `results/` directory:
-- `baseline/`: Single-layer monitoring data
-- `cross_layer/`: Combined eBPF + app metrics
-- `analysis/`: Comparative analysis and visualizations
-
-## Contributing
-
-This is a research project. For questions or contributions, please open an issue.
-
-## License
-
-MIT License
