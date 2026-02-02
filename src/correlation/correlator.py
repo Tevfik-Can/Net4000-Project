@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Cross-Layer Event Correlator (Fixed)
+Cross-Layer Event Correlator "correlator.py"
 
 This module correlates kernel-level eBPF events with application-level metrics
 to provide enhanced observability and detect blind spots in traditional monitoring.
@@ -204,65 +204,95 @@ class CrossLayerCorrelator:
         return stats
     
     def _detect_discrepancy(
-        self, 
-        app_metric: Dict, 
-        kernel_stats: Dict,
-        matching_events: List[Dict]
-    ) -> Tuple[bool, str]:
+    self, 
+    app_metric: Dict, 
+    kernel_stats: Dict,
+    matching_events: List[Dict]
+) -> Tuple[bool, str]:
         """
-        Detect discrepancies between application and kernel observations.
+        Detect TRUE blind spots: Issues visible in kernel but hidden from app.
         
-        This is where cross-layer insights reveal monitoring blind spots.
-        
-        Returns:
-            Tuple of (discrepancy_detected: bool, reason: str)
+        The app layer thinks everything is fine, but kernel reveals problems.
         """
-        # First, check if we have ANY matching kernel events
+        
+        # Skip if no kernel events (this is a tool limitation, not a blind spot)
         if len(matching_events) == 0:
-            # No kernel events matched - this could be:
-            # 1. Wrong PID (app running in different process)
-            # 2. Time desync
-            # 3. eBPF not capturing this connection
-            return True, "No kernel events matched this request (possible PID mismatch or time desync)"
+            return False, None  # Changed from True - not a research finding
         
-        # Case 1: Application reports success but minimal/no data transfer
-        if app_metric.get('result') == 'success' or app_metric.get('status_code') == 200:
-            # For HTTP, we expect at least some data exchange
-            # Loopback connections often show 0 bytes in BPF due to optimization
-            if kernel_stats['bytes_sent'] == 0 and kernel_stats['bytes_recv'] == 0:
-                # Check if there are send/recv events even with 0 bytes (loopback optimization)
-                if kernel_stats['event_types'].get('send', 0) > 0 or kernel_stats['event_types'].get('recv', 0) > 0:
-                    # Events exist but show 0 bytes - likely loopback optimization
-                    return False, None
-                else:
-                    return True, "App reports success but no kernel send/recv events detected"
+        # ONLY flag as blind spot if app reports success
+        app_success = (app_metric.get('result') == 'success' or 
+                    app_metric.get('status_code') == 200)
         
-        # Case 2: High latency but minimal kernel activity
-        if app_metric['latency_ms'] > 100:  # Threshold for "high" latency
-            expected_events = 4  # connect, send, recv, close
-            if len(kernel_stats['event_types']) < expected_events:
-                return True, f"High latency ({app_metric['latency_ms']:.2f}ms) with only {len(kernel_stats['event_types'])} event types"
+        if not app_success:
+            # App already knows there's a problem - not a blind spot
+            return False, None
         
-        # Case 3: Application timeout but kernel shows activity
-        if app_metric.get('result') == 'timeout':
-            if kernel_stats['bytes_sent'] > 0:
-                return True, "App timeout but kernel shows data was sent"
+        # ============================================================
+        # TRUE BLIND SPOTS: App says OK, but kernel reveals issues
+        # ============================================================
         
-        # Case 4: Connection established but no data sent
-        if kernel_stats['connections'] > 0 and kernel_stats['bytes_sent'] == 0:
-            if kernel_stats['event_types'].get('send', 0) == 0:
-                return True, "Connection established but no send attempts"
+        # BLIND SPOT 1: Hidden retransmissions
+        # App: "Success in 50ms"
+        # Kernel: Actually retransmitted packets (network struggling)
+        retransmit_events = [e for e in matching_events if e.get('event_type') == 'retransmit']
+        if len(retransmit_events) > 0:
+            return True, f"App reports success but kernel detected {len(retransmit_events)} TCP retransmissions (hidden network issues)"
         
-        # Case 5: Asymmetric data transfer (potential packet loss)
-        if kernel_stats['bytes_sent'] > 0 and kernel_stats['bytes_recv'] == 0:
-            if app_metric.get('status_code') == 200:
-                if kernel_stats['event_types'].get('recv', 0) == 0:
-                    return True, "Data sent but no response received at kernel level (app thinks success)"
+        # BLIND SPOT 2: Multiple connection attempts
+        # App: "Success"
+        # Kernel: Connection failed multiple times before succeeding
+        connect_events = kernel_stats['event_types'].get('connect', 0)
+        if connect_events > 1:
+            return True, f"App reports success but kernel shows {connect_events} connection attempts (reliability issues masked)"
         
-        # Case 6: No connection events but data transfer
-        if kernel_stats['connections'] == 0 and (kernel_stats['bytes_sent'] > 0 or kernel_stats['bytes_recv'] > 0):
-            return True, "Data transfer without connection event (reused socket?)"
+        # BLIND SPOT 3: Excessive kernel events for simple operation
+        # App: "Success in 5ms"
+        # Kernel: 50+ events (something is inefficient)
+        if app_metric['latency_ms'] < 10 and len(matching_events) > 50:
+            return True, f"App reports fast success ({app_metric['latency_ms']:.2f}ms) but kernel shows {len(matching_events)} events (hidden inefficiency)"
         
+        # BLIND SPOT 4: Asymmetric data flow
+        # App: "Success"
+        # Kernel: Sent data but received nothing (or vice versa)
+        bytes_sent = kernel_stats['bytes_sent']
+        bytes_recv = kernel_stats['bytes_recv']
+        
+        # Significant data sent but no response
+        if bytes_sent > 1000 and bytes_recv == 0:
+            return True, "App reports success but kernel shows data sent with no response received (potential packet loss)"
+        
+        # Response received but nothing sent (unexpected)
+        if bytes_recv > 1000 and bytes_sent == 0:
+            return True, "App reports success but kernel shows data received without prior send (protocol anomaly)"
+        
+        # BLIND SPOT 5: Latency mismatch
+        # App: "Low latency"
+        # Kernel: Many events suggest delays
+        if app_metric['latency_ms'] < 20:
+            # For low app-reported latency, shouldn't have many events
+            close_events = kernel_stats['event_types'].get('close', 0)
+            if close_events > 2:
+                return True, f"App reports low latency ({app_metric['latency_ms']:.2f}ms) but kernel shows {close_events} close attempts (hidden connection issues)"
+        
+        # BLIND SPOT 6: Connection reuse masking issues
+        # Kernel shows data transfer without connection establishment
+        # (App reused connection but kernel shows connection was problematic)
+        if kernel_stats['connections'] == 0 and (bytes_sent > 0 or bytes_recv > 0):
+            # This is connection reuse - check if there were problems
+            if len(matching_events) > 20:
+                return True, "App reused connection (appears fast) but kernel shows excessive events (hidden connection issues)"
+        
+        # BLIND SPOT 7: High kernel activity despite app success
+        # App: "Success, normal operation"
+        # Kernel: Excessive send/recv attempts (retries, buffering issues)
+        send_count = kernel_stats['event_types'].get('send', 0)
+        recv_count = kernel_stats['event_types'].get('recv', 0)
+        
+        # For a simple HTTP request, expect ~2-4 send/recv events
+        if send_count > 10 or recv_count > 10:
+            return True, f"App reports success but kernel shows {send_count} sends and {recv_count} receives (excessive system calls indicate inefficiency)"
+        
+        # No blind spot detected - app and kernel agree
         return False, None
     
     def get_blind_spots(self) -> List[CorrelatedEvent]:
@@ -312,27 +342,28 @@ class CrossLayerCorrelator:
                 print(f"  {category}: {count}")
     
     def _categorize_blind_spots(self, blind_spots: List[CorrelatedEvent]) -> Dict[str, int]:
-        """Categorize blind spots by type."""
+        """Categorize TRUE blind spots by type."""
         categories = defaultdict(int)
         for bs in blind_spots:
             if bs.discrepancy_reason:
-                # Extract category from reason
-                if "No kernel events matched" in bs.discrepancy_reason:
-                    categories["Time/PID mismatch"] += 1
-                elif "no kernel send/recv events" in bs.discrepancy_reason:
-                    categories["Missing data transfer events"] += 1
-                elif "High latency" in bs.discrepancy_reason:
-                    categories["Latency with minimal kernel activity"] += 1
-                elif "timeout" in bs.discrepancy_reason:
-                    categories["Timeout discrepancies"] += 1
-                elif "no send attempts" in bs.discrepancy_reason:
-                    categories["Connection without data"] += 1
-                elif "no response received" in bs.discrepancy_reason:
-                    categories["Asymmetric transfer"] += 1
-                elif "without connection event" in bs.discrepancy_reason:
-                    categories["Data without connection"] += 1
+                if "retransmissions" in bs.discrepancy_reason:
+                    categories["Hidden TCP retransmissions"] += 1
+                elif "connection attempts" in bs.discrepancy_reason:
+                    categories["Multiple connection attempts masked"] += 1
+                elif "hidden inefficiency" in bs.discrepancy_reason:
+                    categories["Excessive kernel events for fast operation"] += 1
+                elif "packet loss" in bs.discrepancy_reason or "no response" in bs.discrepancy_reason:
+                    categories["Asymmetric data transfer"] += 1
+                elif "protocol anomaly" in bs.discrepancy_reason:
+                    categories["Protocol-level anomalies"] += 1
+                elif "close attempts" in bs.discrepancy_reason:
+                    categories["Hidden connection issues"] += 1
+                elif "connection reuse" in bs.discrepancy_reason or "connection issues" in bs.discrepancy_reason:
+                    categories["Connection reuse masking problems"] += 1
+                elif "excessive system calls" in bs.discrepancy_reason:
+                    categories["Inefficient kernel interactions"] += 1
                 else:
-                    categories["Other"] += 1
+                    categories["Other kernel-visible issues"] += 1
         return dict(categories)
 
 

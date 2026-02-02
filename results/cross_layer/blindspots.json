@@ -1,0 +1,8 @@
+[
+  {
+    "type": "HIGH_LATENCY",
+    "severity": "MEDIUM",
+    "description": "Maximum latency: 1225.91ms (avg: 216.33ms)",
+    "impact": "Performance degradation may indicate network issues"
+  }
+]
