@@ -40,27 +40,27 @@ source venv/bin/activate
 sudo apt-get install -y bpfcc-tools libbpfcc python3-bpfcc    
 
 # Run Commands:   
-1. Baseline (app-only)  
+Baseline (app-only)  
 python3 tests/integration/test_app_only.py \  
-  --requests 100 \  
-  --output ./results/baseline  
+--requests 100 \  
+--output ./results  
 
-2. Cross-layer (app + kernel)   
+Cross-layer (app + kernel)  
 sudo python3 tests/integration/test_cross_layer.py \  
-  --requests 100 \  
-  --output ./results/cross_layer  
+--requests 100 \  
+--output ./results  
 
-3. Correlate events  
+Correlate events  
 python3 src/correlation/correlator.py \  
-  --app-metrics ./results/cross_layer/app_metrics.json \  
-  --ebpf-events ./results/cross_layer/ebpf_events.json \  
-  --output ./results/cross_layer/correlations.json  
+--app-metrics ./results/app_metrics.json \  
+--ebpf-events ./results/ebpf_events.json \  
+--output ./results/correlations.json  
 
-4. Analyze and compare  
+Analyze and compare  
 python3 src/correlation/analyzer.py \  
-  --correlations ./results/cross_layer/correlations.json \  
-  --baseline ./results/baseline/app_metrics_baseline.json \  
-  --output ./results/comparison_report.json  
+--correlations ./results/correlations.json \  
+--baseline ./results/app_metrics_baseline.json \  
+--output ./results/comparison_report.json  
 
 
 
