@@ -1,3 +1,32 @@
+# File Structure 
+cross-layer-observability/  
+├── .gitignore  
+├── requirements.txt  
+├── docker/  
+│   ├── docker-compose.yml  
+│   ├── Dockerfile.app  
+│   └── Dockerfile.ebpf  
+├── results/           		 # json files  
+│                                       
+├── scripts/                    # Main scripts and testing utilities  
+│   ├── generate_blind_spots.py  
+│   ├── inspect_data.py  
+│   ├── setup_env.sh  
+│   ├── test_app_only.py  
+│   └── test_cross_layer.py    # Main integration test  
+├── src/  
+   ├── application/           # Application layer monitoring  
+   │   ├── client.py  
+   │   └── server.py  
+   ├── correlation/           # Cross-layer correlation logic  
+   │   ├── analyzer.py  
+   │   └── correlator.py  
+   └── ebpf/                  # eBPF kernel monitoring  
+       ├── runner.py  
+       └── tcp_monitor.c  
+
+
+
 ## Quick Start (vscode WSL terminal + docker desktop)
 
 1. cd to project root after download  
