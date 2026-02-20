@@ -1,0 +1,63 @@
+services:
+
+  app-baseline:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.app
+    container_name: observability-app-baseline
+    volumes:
+      - ../results:/app/results
+      - ../scripts:/app/scripts
+      - ../src:/app/src
+    working_dir: /app
+    command: python3 scripts/test_app_only.py --requests 100 --output ./results/baseline
+
+  cross-layer-test:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.ebpf
+    container_name: observability-cross-layer
+    privileged: true
+    network_mode: host
+    pid: host
+    volumes:
+      - /sys/kernel/debug:/sys/kernel/debug:ro
+      - /lib/modules:/lib/modules:ro
+      - /usr/src:/usr/src:ro
+      - /proc:/host/proc:ro
+      - ../results:/app/results
+      - ../scripts:/app/scripts
+      - ../src:/app/src
+    working_dir: /app
+    command: bash -c "python3 scripts/test_cross_layer.py --requests 100 --output ./results 2>/dev/null"
+    depends_on:
+      app-baseline:
+        condition: service_completed_successfully
+
+  correlator:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.app
+    container_name: observability-correlator
+    volumes:
+      - ../results:/app/results
+      - ../src:/app/src
+    working_dir: /app
+    command: python3 src/correlation/correlator.py --app-metrics ./results/app_metrics.json --ebpf-events ./results/ebpf_events.json --output ./results/correlations.json --time-window 50
+    depends_on:
+      cross-layer-test:
+        condition: service_completed_successfully
+
+  analyzer:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.app
+    container_name: observability-analyzer
+    volumes:
+      - ../results:/app/results
+      - ../src:/app/src
+    working_dir: /app
+    command: python3 src/correlation/analyzer.py --correlations ./results/correlations.json --baseline ./results/baseline/app_metrics_baseline.json --output ./results/comparison_report.json
+    depends_on:
+      correlator:
+        condition: service_completed_successfully
