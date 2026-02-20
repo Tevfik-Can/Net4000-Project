@@ -1,0 +1,339 @@
+user1@ubuntu:~/cross-layer$ sudo python3 scripts/full_runner.py --docker --requests 100
+
+======================================================================
+  CROSS-LAYER OBSERVABILITY — DOCKER PIPELINE  (100 requests)
+======================================================================
+    Results : /home/user1/cross-layer/results
+    Started : 2026-02-20 22:27:08
+
+[Step 1] Building Docker images
+
+  Running: docker compose -f /home/user1/cross-layer/docker/docker-compose.yml build
+  ------------------------------------------------------------------
+[+] Building 0.4s (31/31) FINISHED
+ => [internal] load local bake definitions                                                                         0.0s
+ => => reading from stdin 1.86kB                                                                                   0.0s
+ => [correlator internal] load build definition from Dockerfile.app                                                0.0s
+ => => transferring dockerfile: 642B                                                                               0.0s
+ => [cross-layer-test internal] load build definition from Dockerfile.ebpf                                         0.0s
+ => => transferring dockerfile: 1.06kB                                                                             0.0s
+ => [cross-layer-test internal] load metadata for docker.io/library/ubuntu:22.04                                   0.2s
+ => [analyzer internal] load metadata for docker.io/library/python:3.11-slim                                       0.2s
+ => [cross-layer-test internal] load .dockerignore                                                                 0.0s
+ => => transferring context: 2B                                                                                    0.0s
+ => [analyzer 1/8] FROM docker.io/library/python:3.11-slim@sha256:0b23cfb7425d065008b778022a17b1551c82f8b4866ee5a  0.0s
+ => => resolve docker.io/library/python:3.11-slim@sha256:0b23cfb7425d065008b778022a17b1551c82f8b4866ee5a7a200084b  0.0s
+ => [app-baseline internal] load build context                                                                     0.0s
+ => => transferring context: 810B                                                                                  0.0s
+ => [cross-layer-test 1/8] FROM docker.io/library/ubuntu:22.04@sha256:3ba65aa20f86a0fad9df2b2c259c613df006b2e6d0b  0.0s
+ => => resolve docker.io/library/ubuntu:22.04@sha256:3ba65aa20f86a0fad9df2b2c259c613df006b2e6d0bfcc8a146afb8c525a  0.0s
+ => CACHED [app-baseline 2/8] WORKDIR /app                                                                         0.0s
+ => CACHED [app-baseline 3/8] RUN apt-get update && apt-get install -y     gcc     && rm -rf /var/lib/apt/lists/*  0.0s
+ => CACHED [app-baseline 4/8] COPY requirements.txt .                                                              0.0s
+ => CACHED [app-baseline 5/8] RUN pip install --no-cache-dir -r requirements.txt                                   0.0s
+ => CACHED [app-baseline 6/8] COPY src/ ./src/                                                                     0.0s
+ => CACHED [app-baseline 7/8] COPY scripts/ ./scripts/                                                             0.0s
+ => CACHED [app-baseline 8/8] RUN mkdir -p /app/results                                                            0.0s
+ => CACHED [cross-layer-test 2/8] RUN apt-get update && apt-get install -y     python3     python3-pip     bpfcc-  0.0s
+ => CACHED [cross-layer-test 3/8] WORKDIR /app                                                                     0.0s
+ => CACHED [cross-layer-test 4/8] COPY requirements.txt .                                                          0.0s
+ => CACHED [cross-layer-test 5/8] RUN pip3 install --no-cache-dir -r requirements.txt                              0.0s
+ => CACHED [cross-layer-test 6/8] COPY src/ ./src/                                                                 0.0s
+ => CACHED [cross-layer-test 7/8] COPY scripts/ ./scripts/                                                         0.0s
+ => CACHED [cross-layer-test 8/8] RUN mkdir -p /app/results                                                        0.0s
+ => [app-baseline] exporting to image                                                                              0.1s
+ => => exporting layers                                                                                            0.0s
+ => => exporting manifest sha256:09b87c08a41df944e91f6e0084d0c5be99d67607f4afaec891e2217cfabbffe7                  0.0s
+ => => exporting config sha256:49d5086780d6c8ad591bea07748ff3917d6e25d254f099a4ef4534142563d9d7                    0.0s
+ => => exporting attestation manifest sha256:f939f9ecb535866d2eb30fd2814ee663eb42e1cbe4128d970d16a92891670c01      0.0s
+ => => exporting manifest list sha256:4bfc05568cd4cb6718afd89d090bb39cde3e934beedd47ae2375295007b29f4d             0.0s
+ => => naming to docker.io/library/docker-app-baseline:latest                                                      0.0s
+ => => unpacking to docker.io/library/docker-app-baseline:latest                                                   0.0s
+ => [correlator] exporting to image                                                                                0.1s
+ => => exporting layers                                                                                            0.0s
+ => => exporting manifest sha256:8fdd2ffa14cdea30f9df52063849f067b4f8de1c2688419023c232546a9ac0d5                  0.0s
+ => => exporting config sha256:e3ebeb08d0433a7201b655e68f08c46285f1e23b8942eeae58e6d1e15b66a4c0                    0.0s
+ => => exporting attestation manifest sha256:66d0367cca5483ca92fac734c5ab051e2beb1415630a452d5dfb9062e35af349      0.0s
+ => => exporting manifest list sha256:8f7a393260ae84b008504f5c87465780fa3b454e10210a6323fe216e14b25f14             0.0s
+ => => naming to docker.io/library/docker-correlator:latest                                                        0.0s
+ => => unpacking to docker.io/library/docker-correlator:latest                                                     0.0s
+ => [analyzer] exporting to image                                                                                  0.1s
+ => => exporting layers                                                                                            0.0s
+ => => exporting manifest sha256:882f2f130db670461589eb960908ca5cd6a532940dd1c0dbeb5f7ad08638de3d                  0.0s
+ => => exporting config sha256:129d8bfac650c78c91776958a65e7de74d62148e0293c85a624bdd9993aeee1a                    0.0s
+ => => exporting attestation manifest sha256:323f8911b2aec3f108a51e65de3ccfa188ea1f20bfa8023babd4a2cd6ad552a9      0.0s
+ => => exporting manifest list sha256:adaa183ce0fa1e9ffba9e4c09286a13597dda9f0f4c323dcbf4f17620e7fc926             0.0s
+ => => naming to docker.io/library/docker-analyzer:latest                                                          0.0s
+ => => unpacking to docker.io/library/docker-analyzer:latest                                                       0.0s
+ => [cross-layer-test] exporting to image                                                                          0.1s
+ => => exporting layers                                                                                            0.0s
+ => => exporting manifest sha256:adb1434a3970b1c482fba297efea562f24fd75393c4c352ee5e52a03f34e26fc                  0.0s
+ => => exporting config sha256:8c9383e565d842a5ed3e6ecab6e2e0238b6695eb6a17c726a618aba6cc7390a7                    0.0s
+ => => exporting attestation manifest sha256:eefb68125e973fc377aba32e30e1e981b0f6c046c74e4e6f6ea083a4f7188447      0.0s
+ => => exporting manifest list sha256:cef6e97d67534b8af69e9ee83306580cbfdc3203df26b0cc81798cc543f22cd4             0.0s
+ => => naming to docker.io/library/docker-cross-layer-test:latest                                                  0.0s
+ => => unpacking to docker.io/library/docker-cross-layer-test:latest                                               0.0s
+ => [cross-layer-test] resolving provenance for metadata file                                                      0.0s
+ => [app-baseline] resolving provenance for metadata file                                                          0.0s
+ => [analyzer] resolving provenance for metadata file                                                              0.0s
+ => [correlator] resolving provenance for metadata file                                                            0.0s
+[+] build 4/4
+ ✔ Image docker-app-baseline     Built                                                                              0.5s
+ ✔ Image docker-cross-layer-test Built                                                                              0.5s
+ ✔ Image docker-correlator       Built                                                                              0.5s
+ ✔ Image docker-analyzer         Built                                                                              0.5s
+  ------------------------------------------------------------------
+  ✓ Docker build complete
+
+[Step 2] Running full pipeline via Docker Compose
+
+  Running: docker compose -f /home/user1/cross-layer/docker/docker-compose.yml up
+  ------------------------------------------------------------------
+[+] up 4/4
+ ✔ Container observability-app-baseline Recreated                                                                   0.1s
+ ✔ Container observability-cross-layer  Recreated                                                                   0.1s
+ ✔ Container observability-correlator   Recreated                                                                   0.1s
+ ✔ Container observability-analyzer     Recreated                                                                   0.1s
+Attaching to observability-analyzer, observability-app-baseline, observability-correlator, observability-cross-layer
+Container observability-app-baseline Waiting
+observability-app-baseline  | ============================================================
+observability-app-baseline  | Application-Only Monitoring Test (Baseline)
+observability-app-baseline  | ============================================================
+observability-app-baseline  | Test server started on 127.0.0.1:8080
+observability-app-baseline  | Generating 100 requests (APP-ONLY)...
+observability-app-baseline  | Load generation complete
+observability-app-baseline  |
+observability-app-baseline  | App-only test complete:
+observability-app-baseline  |   Requests:     100
+observability-app-baseline  |   Successful:   100 (100.0%)
+observability-app-baseline  |   Avg latency:  1.93 ms
+observability-app-baseline  |
+observability-app-baseline  | Output files:
+observability-app-baseline  |   Baseline:    ./results/baseline/app_only_baseline.json
+observability-app-baseline  |   Metrics:     ./results/baseline/app_metrics_baseline.json
+observability-app-baseline  | ============================================================
+observability-app-baseline exited with code 0
+Container observability-app-baseline Exited
+Container observability-cross-layer Waiting
+observability-cross-layer   | ============================================================
+observability-cross-layer   | Cross-Layer Observability Integration Test
+observability-cross-layer   | (WSL2 Optimized - Working Kprobes Only)
+observability-cross-layer   | ============================================================
+observability-cross-layer   | Test server started on 127.0.0.1:8080
+observability-cross-layer   | Boot time offset: 1771621790.267 seconds
+observability-cross-layer   | Loading eBPF program...
+observability-cross-layer   |
+observability-cross-layer   | === Attaching Kprobes ===
+observability-cross-layer   |   ✓ Connection                     (tcp_v4_connect)
+observability-cross-layer   |   ✓ Send                           (tcp_sendmsg)
+observability-cross-layer   |   ✓ Receive                        (tcp_recvmsg)
+observability-cross-layer   |   ✓ Close                          (tcp_close)
+observability-cross-layer   |   ✓ Retransmit                     (tcp_retransmit_skb)
+observability-cross-layer   |   ✓ Timeout                        (tcp_write_timer_handler)
+observability-cross-layer   |
+observability-cross-layer   | Successfully attached 6 kprobes
+observability-cross-layer   | eBPF monitoring started
+observability-cross-layer   |
+observability-cross-layer   | Generating 100 requests...
+observability-cross-layer   | Load generation complete
+observability-cross-layer   | eBPF monitoring stopped. Captured 3232 events
+observability-cross-layer   |
+observability-cross-layer   | === Time Synchronization Check ===
+observability-cross-layer   | App first event:  1771626443461802240
+observability-cross-layer   | eBPF first event: 1771626443182079372
+observability-cross-layer   | Difference: 0.280 seconds
+observability-cross-layer   | ✓ Timestamps are synchronized!
+observability-cross-layer   |
+observability-cross-layer   | ============================================================
+observability-cross-layer   | BLINDSPOT ANALYSIS
+observability-cross-layer   | ============================================================
+observability-cross-layer   |
+observability-cross-layer   | eBPF Event Distribution:
+observability-cross-layer   |   close          :   460
+observability-cross-layer   |   connect        :   232
+observability-cross-layer   |   recv           :  1082
+observability-cross-layer   |   send           :  1262
+observability-cross-layer   |   timeout        :   196
+observability-cross-layer   |
+observability-cross-layer   | Application Metrics:
+observability-cross-layer   |   Total requests:  100
+observability-cross-layer   |   Successful:      100
+observability-cross-layer   |   Failed:          0
+observability-cross-layer   |
+observability-cross-layer   | ============================================================
+observability-cross-layer   | DETECTED 1 BLINDSPOT(S)
+observability-cross-layer   | ============================================================
+observability-cross-layer   |
+observability-cross-layer   | [1] KERNEL_TIMEOUTS (Severity: HIGH)
+observability-cross-layer   |     eBPF detected 196 kernel-level timeouts
+observability-cross-layer   |     Impact: Connection delays not visible at application layer
+observability-cross-layer   |
+observability-cross-layer   | ============================================================
+observability-cross-layer   | Test Summary
+observability-cross-layer   | ============================================================
+observability-cross-layer   | HTTP requests:         100
+observability-cross-layer   | Successful requests:   100 (100.0%)
+observability-cross-layer   | Average latency:       1.88 ms
+observability-cross-layer   | TCP events captured:   3232
+observability-cross-layer   | Kprobes attached:      6
+observability-cross-layer   | Blindspots detected:   1
+observability-cross-layer   |
+observability-cross-layer   | Output files:
+observability-cross-layer   |   Combined:   ./results/test_output.json
+observability-cross-layer   |   App only:   ./results/app_metrics.json
+observability-cross-layer   |   eBPF only:  ./results/ebpf_events.json
+observability-cross-layer   |   Blindspots: ./results/blindspots.json
+observability-cross-layer   | ============================================================
+observability-cross-layer exited with code 0
+Container observability-cross-layer Exited
+Container observability-correlator Waiting
+observability-correlator    | Loading application metrics from ./results/app_metrics.json
+observability-correlator    | Loading eBPF events from ./results/ebpf_events.json
+observability-correlator    | Correlating 100 requests with 3232 kernel events...
+observability-correlator    |
+observability-correlator    | Correlation complete:
+observability-correlator    |   Total requests: 100
+observability-correlator    |   Blind spots detected: 21
+observability-correlator    |
+observability-correlator    | Sample blind spots (showing first 5):
+observability-correlator    |   Request 6: App reports 1.64ms latency but kernel shows 44 send/recv events — hidden fragmentation or inefficiency
+observability-correlator    |   Request 8: App reports 1.88ms latency but kernel shows 48 send/recv events — hidden fragmentation or inefficiency
+observability-correlator    |   Request 10: App reports 1.45ms latency but kernel shows 56 send/recv events — hidden fragmentation or inefficiency
+observability-correlator    |   Request 18: App reports 1.66ms latency but kernel shows 32 send/recv events — hidden fragmentation or inefficiency
+observability-correlator    |   Request 27: App reports 1.60ms latency but kernel shows 96 send/recv events — hidden fragmentation or inefficiency
+observability-correlator    |   ... and 16 more
+observability-correlator    |
+observability-correlator    | Exported 100 correlations to ./results/correlations.json
+observability-correlator    | Blind spots detected: 21
+observability-correlator    |
+observability-correlator    | Blind spot categories:
+observability-correlator    |   Hidden fragmentation or inefficiency: 21
+observability-correlator exited with code 0
+Container observability-correlator Exited
+observability-analyzer      | Loading correlation data...
+observability-analyzer      |
+observability-analyzer      | ======================================================================
+observability-analyzer      |  PERFORMANCE ANALYSIS SUMMARY
+observability-analyzer      | ======================================================================
+observability-analyzer      |
+observability-analyzer      | 📊 Request Statistics:
+observability-analyzer      |   Total Requests:      100
+observability-analyzer      |   Successful:          100 (100.0%)
+observability-analyzer      |   Failed:              0 (0.0%)
+observability-analyzer      |   Timeouts:            0
+observability-analyzer      |
+observability-analyzer      | ⏱️  Latency Metrics (milliseconds):
+observability-analyzer      |   Average:             1.88 ms
+observability-analyzer      |   Median (P50):        1.57 ms
+observability-analyzer      |   P90:                 2.03 ms
+observability-analyzer      |   P95:                 3.47 ms
+observability-analyzer      |   P99:                 11.38 ms
+observability-analyzer      |   Min:                 1.22 ms
+observability-analyzer      |   Max:                 11.38 ms
+observability-analyzer      |   Std Deviation:       1.30 ms
+observability-analyzer      |
+observability-analyzer      | 📈 Throughput Metrics:
+observability-analyzer      |   Average:             16.96 Mbps
+observability-analyzer      |   Total Data:          0.34 MB
+observability-analyzer      |     Sent:              0.17 MB
+observability-analyzer      |     Received:          0.17 MB
+observability-analyzer      |
+observability-analyzer      | 🔧 Kernel Metrics:
+observability-analyzer      |   Total Events:        3158
+observability-analyzer      |   Avg Events/Request:  31.6
+observability-analyzer      |   Bytes/Event:         108.1
+observability-analyzer      |
+observability-analyzer      | 🔍 Cross-Layer Insights:
+observability-analyzer      |   Blind Spots:         21 (21.0%)
+observability-analyzer      |   Discrepancy Types:
+observability-analyzer      |     - Hidden fragmentation or inefficiency: 21
+observability-analyzer      |
+observability-analyzer      | ⚠️  Performance Flags:
+observability-analyzer      |   High Latency:        0 (>100.0ms)
+observability-analyzer      |   Low Throughput:      2 (<1.0 Mbps)
+observability-analyzer      |
+observability-analyzer      | 💡 Recommendations:
+observability-analyzer      |   1. ⚠️ Low data transfer efficiency (108.1 bytes/event): Many small packets detected. Consider batching data or increasing buffer sizes.
+observability-analyzer      |   2. 🔍 Significant monitoring blind spots (21.0%): Cross-layer monitoring reveals issues missed by app-only monitoring. Types: Hidden fragmentation or inefficiency: 21
+observability-analyzer      |
+observability-analyzer      | ======================================================================
+observability-analyzer      |
+observability-analyzer      | 📄 Detailed report exported to: ./results/comparison_report.json
+observability-analyzer      |
+observability-analyzer      | Loading baseline data for comparison...
+observability-analyzer      |
+observability-analyzer      | ======================================================================
+observability-analyzer      |  BASELINE COMPARISON
+observability-analyzer      | ======================================================================
+observability-analyzer      |
+observability-analyzer      | Improvement Metrics:
+observability-analyzer      |   Latency:             +2.7%
+observability-analyzer      |   Blind Spots Found:   21
+observability-analyzer      |
+observability-analyzer      | Additional Insights:
+observability-analyzer      |   • Cross-layer monitoring detected 21 additional issues (21.0%) that app-only monitoring missed
+observability-analyzer      |   • Kernel-level visibility: avg 31.6 events per request
+observability-analyzer      | ======================================================================
+observability-analyzer exited with code 0
+  ------------------------------------------------------------------
+  ✓ Docker pipeline complete
+w Enable Watch   d Detach
+[Step 3] Unified summary
+
+======================================================================
+  FULL PIPELINE — UNIFIED SUMMARY
+======================================================================
+
+  Timestamp  : 2026-02-20 22:27:36
+  Runtime    : 27.6s
+  Requests   : 100
+
+  ──────────────────────────────────────────────────────────────────
+  APP-ONLY BASELINE
+  ──────────────────────────────────────────────────────────────────
+  Success rate : 100/100 (100.0%)
+  Avg latency  : 1.93 ms
+  P95 latency  : 9.81 ms
+  Max latency  : 16.75 ms
+
+  ──────────────────────────────────────────────────────────────────
+  CROSS-LAYER TEST  (app + eBPF)
+  ──────────────────────────────────────────────────────────────────
+  Success rate      : 100/100 (100.0%)
+  Avg latency       : 1.88 ms
+  Total eBPF events : 3232
+  Event breakdown   :
+      close           : 460
+      connect         : 232
+      recv            : 1082
+      send            : 1262
+      timeout         : 196
+
+  ──────────────────────────────────────────────────────────────────
+  CORRELATION RESULTS
+  ──────────────────────────────────────────────────────────────────
+  Correlated requests  : 100
+  Blind spots detected : 21 (21.0%)
+      Hidden fragmentation or inefficiency: 21
+
+  ──────────────────────────────────────────────────────────────────
+  RECOMMENDATIONS
+  ──────────────────────────────────────────────────────────────────
+  1. ⚠️ Low data transfer efficiency (108.1 bytes/event): Many small packets detected. Consider batching data or increasing buffer sizes.
+  2. 🔍 Significant monitoring blind spots (21.0%): Cross-layer monitoring reveals issues missed by app-only monitoring. Types: Hidden fragmentation or inefficiency: 21
+
+  ──────────────────────────────────────────────────────────────────
+  OUTPUT FILES
+  ──────────────────────────────────────────────────────────────────
+  ✓ results/baseline/app_metrics_baseline.json  (18.6 KB)
+  ✓ results/app_metrics.json  (18.6 KB)
+  ✓ results/ebpf_events.json  (669.2 KB)
+  ✓ results/correlations.json  (29.5 KB)
+  ✓ results/comparison_report.json  (29.6 KB)
+
+======================================================================
+  DONE
+======================================================================
+
+  To clean up: docker compose -f /home/user1/cross-layer/docker/docker-compose.yml down
+user1@ubuntu:~/cross-layer$
