@@ -14,6 +14,7 @@ cross-layer-observability/
 │ ├── setup_env.sh  
 │ ├── test_app_only.py  
 │ └── test_cross_layer.py # Main integration test  
+│ └── full_runner.py (main orchestrator calls all other files)  
 ├── src/  
 ├── application/ # Application layer monitoring  
 │ ├── client.py  
@@ -27,55 +28,21 @@ cross-layer-observability/
 
 
 
-## Quick Start (vscode WSL terminal venv)
+# How to run (i put all these files on vm, then ran with docker)  
+sudo apt update  
+sudo apt install -y ca-certificates curl gnupg  
+sudo install -m 0755 -d /etc/apt/keyrings  
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg  
+sudo chmod a+r /etc/apt/keyrings/docker.gpg  
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo $VERSION_CODENAME) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null  
+sudo apt update  
+sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin  
+sudo usermod -aG docker $USER  
+sudo systemctl enable --now docker  
 
-1. cd to project root after download  
+sudo apt install -y linux-headers-$(uname -r) bpfcc-tools python3-bpfcc libbpfcc  
 
-2. Setup Python environment  
-chmod +x scripts/setup_env.sh  
-./scripts/setup_env.sh  
-source venv/bin/activate  
-
-3. Install BCC tools      
-sudo apt-get install -y bpfcc-tools libbpfcc python3-bpfcc      
-
-Baseline (app-only)  
-python3 tests/integration/test_app_only.py \  
---requests 100 \  
---output ./results  
-
-Cross-layer (app + kernel)  
-sudo python3 tests/integration/test_cross_layer.py \  
---requests 100 \  
---output ./results  
-
-Correlate events
-python3 src/correlation/correlator.py \  
---app-metrics ./results/app_metrics.json \  
---ebpf-events ./results/ebpf_events.json \  
---output ./results/correlations.json  
-
-Analyze and compare  
-python3 src/correlation/analyzer.py \  
---correlations ./results/correlations.json \  
---baseline ./results/app_metrics_baseline.json \  
---output ./results/comparison_report.json  
-
-
-
-# Run in Docker    
-cd docker  
-
-docker compose build  
-
-docker compose up -d; docker compose logs -f  
-
-or run 1 at a time:   
-docker compose run --rm correlator python3 src/correlation/correlator.py \  
-  --app-metrics ./results/app_metrics.json \  
-  --ebpf-events ./results/ebpf_events.json \  
-  --output ./results/correlations.json  
-
-docker compose run --rm analyzer python3 src/correlation/analyzer.py \  
-  --correlations ./results/correlations.json \  
-  --output ./results/comparison_report.json  
+Log out and back in (applies docker group), then build and run   
+cd ~/cross-layer  
+docker compose -f docker/docker-compose.yml build  
+sudo python3 scripts/full_runner.py --docker --requests 100  
