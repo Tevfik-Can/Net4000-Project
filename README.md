@@ -29,6 +29,7 @@ cross-layer-observability/
 
 
 # How to run (i put all these files on vm, then ran with docker)  
+# Use all files in toobad patch 1  
 sudo apt update  
 sudo apt install -y ca-certificates curl gnupg  
 sudo install -m 0755 -d /etc/apt/keyrings  
