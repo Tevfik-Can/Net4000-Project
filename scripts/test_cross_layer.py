@@ -11,9 +11,7 @@ from http.server import HTTPServer, BaseHTTPRequestHandler
 from bcc import BPF
 
 EBPF_PROGRAM_ENHANCED = """
-#include <uapi/linux/ptrace.h>
-#include <net/sock.h>
-#include <bcc/proto.h>
+#include <linux/ptrace.h>
 
 #define EVT_CONNECT     1
 #define EVT_SEND        2
@@ -397,17 +395,17 @@ def run_test(num_requests=10, output_dir='./results/cross_layer'):
     with open(combined_file, 'w') as f:
         json.dump(output, f, indent=2)
     
-    app_file = f"{output_dir}/app_metrics.json"
-    with open(app_file, 'w') as f:
-        json.dump(app_metrics, f, indent=2)
+    # app_file = f"{output_dir}/app_metrics.json"
+    # with open(app_file, 'w') as f:
+    #     json.dump(app_metrics, f, indent=2)
     
-    ebpf_file = f"{output_dir}/ebpf_events.json"
-    with open(ebpf_file, 'w') as f:
-        json.dump(ebpf_events, f, indent=2)
+    # ebpf_file = f"{output_dir}/ebpf_events.json"
+    # with open(ebpf_file, 'w') as f:
+    #     json.dump(ebpf_events, f, indent=2)
     
-    blindspots_file = f"{output_dir}/blindspots.json"
-    with open(blindspots_file, 'w') as f:
-        json.dump(blindspots, f, indent=2)
+    # blindspots_file = f"{output_dir}/blindspots.json"
+    # with open(blindspots_file, 'w') as f:
+    #     json.dump(blindspots, f, indent=2)
     
     print("\n" + "=" * 60)
     print("Test Summary")
@@ -421,9 +419,9 @@ def run_test(num_requests=10, output_dir='./results/cross_layer'):
     
     print(f"\nOutput files:")
     print(f"  Combined:   {combined_file}")
-    print(f"  App only:   {app_file}")
-    print(f"  eBPF only:  {ebpf_file}")
-    print(f"  Blindspots: {blindspots_file}")
+    # print(f"  App only:   {app_file}")
+    # print(f"  eBPF only:  {ebpf_file}")
+    # print(f"  Blindspots: {blindspots_file}")
     
     print("=" * 60)
 

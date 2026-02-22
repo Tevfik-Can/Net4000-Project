@@ -25,7 +25,8 @@ class CrossLayerCorrelator:
 
     def load_app_metrics(self, filepath: str) -> List[Dict]:
         with open(filepath, 'r') as f:
-            return json.load(f)
+            data = json.load(f)
+            return data.get("application_metrics", [])
 
     def load_ebpf_events(self, filepath: str) -> List[Dict]:
         with open(filepath, 'r') as f:

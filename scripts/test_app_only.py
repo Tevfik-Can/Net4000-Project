@@ -94,7 +94,7 @@ class LoadGenerator:
         print(f"Load generation complete")
 
 
-def run_app_only_test(num_requests=10, output_dir='./results/baseline'):
+def run_app_only_test(num_requests=10, output_dir='./results'):
     """
     Run application-only monitoring test.
     
@@ -125,19 +125,19 @@ def run_app_only_test(num_requests=10, output_dir='./results/baseline'):
     successful = len([m for m in app_metrics if m["result"] == "success"])
     avg_latency = sum(m["latency_ms"] for m in app_metrics) / len(app_metrics)
     
-    # Export app-only metrics
-    output_file = f"{output_dir}/app_only_baseline.json"
-    with open(output_file, 'w') as f:
-        json.dump({
-            "application_metrics": app_metrics,
-            "summary": {
-                "total_requests": len(app_metrics),
-                "successful_requests": successful,
-                "avg_latency_ms": avg_latency,
-                "test_type": "app_only_baseline",
-                "test_timestamp": time.time()
-            }
-        }, f, indent=2)
+    # # Export app-only metrics
+    # output_file = f"{output_dir}/app_only_baseline.json"
+    # with open(output_file, 'w') as f:
+    #     json.dump({
+    #         "application_metrics": app_metrics,
+    #         "summary": {
+    #             "total_requests": len(app_metrics),
+    #             "successful_requests": successful,
+    #             "avg_latency_ms": avg_latency,
+    #             "test_type": "app_only_baseline",
+    #             "test_timestamp": time.time()
+    #         }
+    #     }, f, indent=2)
     
     # Also save just the metrics for correlator
     metrics_file = f"{output_dir}/app_metrics_baseline.json"
@@ -148,9 +148,9 @@ def run_app_only_test(num_requests=10, output_dir='./results/baseline'):
     print(f"  Requests:     {len(app_metrics)}")
     print(f"  Successful:   {successful} ({successful/len(app_metrics)*100:.1f}%)")
     print(f"  Avg latency:  {avg_latency:.2f} ms")
-    print(f"\nOutput files:")
-    print(f"  Baseline:    {output_file}")
-    print(f"  Metrics:     {metrics_file}")
+    # print(f"\nOutput files:")
+    # print(f"  Baseline:    {output_file}")
+    # print(f"  Metrics:     {metrics_file}")
     print("=" * 60)
 
 
@@ -166,7 +166,7 @@ def main():
     )
     parser.add_argument(
         '--output',
-        default='./results/baseline',
+        default='./results',
         help='Output directory'
     )
     

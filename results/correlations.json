@@ -1,0 +1,1009 @@
+{
+  "total_requests": 100,
+  "blind_spots_detected": 3,
+  "blind_spot_types": {
+    "Hidden fragmentation or inefficiency": 3
+  },
+  "correlations": [
+    {
+      "request_id": 1,
+      "app_latency_ms": 3.6804676055908203,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 2,
+      "app_latency_ms": 2.4023056030273438,
+      "app_status_code": 200,
+      "kernel_events_count": 28,
+      "kernel_bytes_sent": 914,
+      "kernel_bytes_recv": 898,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 3,
+      "app_latency_ms": 2.218008041381836,
+      "app_status_code": 200,
+      "kernel_events_count": 30,
+      "kernel_bytes_sent": 944,
+      "kernel_bytes_recv": 960,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 4,
+      "app_latency_ms": 2.314329147338867,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 5,
+      "app_latency_ms": 2.1712779998779297,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 6,
+      "app_latency_ms": 2.3441314697265625,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 7,
+      "app_latency_ms": 2.3009777069091797,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 8,
+      "app_latency_ms": 2.5615692138671875,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 9,
+      "app_latency_ms": 2.2923946380615234,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 10,
+      "app_latency_ms": 2.4619102478027344,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 11,
+      "app_latency_ms": 2.0067691802978516,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 12,
+      "app_latency_ms": 2.5751590728759766,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 13,
+      "app_latency_ms": 2.298593521118164,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 14,
+      "app_latency_ms": 2.1333694458007812,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 15,
+      "app_latency_ms": 2.043008804321289,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 16,
+      "app_latency_ms": 2.051830291748047,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 17,
+      "app_latency_ms": 2.611398696899414,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 18,
+      "app_latency_ms": 2.173185348510742,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 19,
+      "app_latency_ms": 2.135753631591797,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 20,
+      "app_latency_ms": 2.3221969604492188,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 21,
+      "app_latency_ms": 1.9938945770263672,
+      "app_status_code": 200,
+      "kernel_events_count": 24,
+      "kernel_bytes_sent": 576,
+      "kernel_bytes_recv": 744,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 22,
+      "app_latency_ms": 1.9583702087402344,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 23,
+      "app_latency_ms": 1.7304420471191406,
+      "app_status_code": 200,
+      "kernel_events_count": 24,
+      "kernel_bytes_sent": 578,
+      "kernel_bytes_recv": 746,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 24,
+      "app_latency_ms": 2.054929733276367,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 25,
+      "app_latency_ms": 1.9817352294921875,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 26,
+      "app_latency_ms": 1.9638538360595703,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 27,
+      "app_latency_ms": 2.452850341796875,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 28,
+      "app_latency_ms": 2.232789993286133,
+      "app_status_code": 200,
+      "kernel_events_count": 24,
+      "kernel_bytes_sent": 660,
+      "kernel_bytes_recv": 908,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 29,
+      "app_latency_ms": 2.118349075317383,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 30,
+      "app_latency_ms": 1.917123794555664,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 31,
+      "app_latency_ms": 2.135753631591797,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 32,
+      "app_latency_ms": 2.3076534271240234,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 33,
+      "app_latency_ms": 1.9428730010986328,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 34,
+      "app_latency_ms": 1.771688461303711,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 35,
+      "app_latency_ms": 1.8968582153320312,
+      "app_status_code": 200,
+      "kernel_events_count": 24,
+      "kernel_bytes_sent": 768,
+      "kernel_bytes_recv": 584,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 36,
+      "app_latency_ms": 1.8420219421386719,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 37,
+      "app_latency_ms": 2.164125442504883,
+      "app_status_code": 200,
+      "kernel_events_count": 16,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 38,
+      "app_latency_ms": 2.166748046875,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 39,
+      "app_latency_ms": 2.486705780029297,
+      "app_status_code": 200,
+      "kernel_events_count": 24,
+      "kernel_bytes_sent": 766,
+      "kernel_bytes_recv": 582,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 40,
+      "app_latency_ms": 1.89208984375,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 41,
+      "app_latency_ms": 2.0427703857421875,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 42,
+      "app_latency_ms": 2.187490463256836,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 43,
+      "app_latency_ms": 1.9602775573730469,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 44,
+      "app_latency_ms": 2.1240711212158203,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 45,
+      "app_latency_ms": 1.8987655639648438,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 46,
+      "app_latency_ms": 2.0432472229003906,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 47,
+      "app_latency_ms": 1.8167495727539062,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 48,
+      "app_latency_ms": 1.8680095672607422,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 49,
+      "app_latency_ms": 1.9066333770751953,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 50,
+      "app_latency_ms": 1.9288063049316406,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 51,
+      "app_latency_ms": 2.2606849670410156,
+      "app_status_code": 200,
+      "kernel_events_count": 70,
+      "kernel_bytes_sent": 3632,
+      "kernel_bytes_recv": 2570,
+      "discrepancy_detected": true,
+      "discrepancy_reason": "App reports 2.26ms latency but kernel shows 62 send/recv events \u2014 hidden fragmentation or inefficiency"
+    },
+    {
+      "request_id": 52,
+      "app_latency_ms": 1.8885135650634766,
+      "app_status_code": 200,
+      "kernel_events_count": 54,
+      "kernel_bytes_sent": 5584,
+      "kernel_bytes_recv": 13150,
+      "discrepancy_detected": true,
+      "discrepancy_reason": "App reports 1.89ms latency but kernel shows 48 send/recv events \u2014 hidden fragmentation or inefficiency"
+    },
+    {
+      "request_id": 53,
+      "app_latency_ms": 1.8973350524902344,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 54,
+      "app_latency_ms": 1.943826675415039,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 55,
+      "app_latency_ms": 2.1653175354003906,
+      "app_status_code": 200,
+      "kernel_events_count": 24,
+      "kernel_bytes_sent": 528,
+      "kernel_bytes_recv": 1652,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 56,
+      "app_latency_ms": 1.972198486328125,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 57,
+      "app_latency_ms": 2.223491668701172,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 58,
+      "app_latency_ms": 1.873016357421875,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 59,
+      "app_latency_ms": 1.9803047180175781,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 60,
+      "app_latency_ms": 1.9485950469970703,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 61,
+      "app_latency_ms": 2.0623207092285156,
+      "app_status_code": 200,
+      "kernel_events_count": 30,
+      "kernel_bytes_sent": 1062,
+      "kernel_bytes_recv": 1046,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 62,
+      "app_latency_ms": 2.210855484008789,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 63,
+      "app_latency_ms": 1.8377304077148438,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 64,
+      "app_latency_ms": 2.4344921112060547,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 65,
+      "app_latency_ms": 2.5386810302734375,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 66,
+      "app_latency_ms": 2.0134449005126953,
+      "app_status_code": 200,
+      "kernel_events_count": 20,
+      "kernel_bytes_sent": 656,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 67,
+      "app_latency_ms": 2.0530223846435547,
+      "app_status_code": 200,
+      "kernel_events_count": 20,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 850,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 68,
+      "app_latency_ms": 2.0341873168945312,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 69,
+      "app_latency_ms": 1.909494400024414,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 70,
+      "app_latency_ms": 2.187967300415039,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 71,
+      "app_latency_ms": 2.1567344665527344,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 72,
+      "app_latency_ms": 1.9915103912353516,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 73,
+      "app_latency_ms": 2.075672149658203,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 74,
+      "app_latency_ms": 1.9533634185791016,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 75,
+      "app_latency_ms": 2.0444393157958984,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 76,
+      "app_latency_ms": 2.0253658294677734,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 77,
+      "app_latency_ms": 2.0885467529296875,
+      "app_status_code": 200,
+      "kernel_events_count": 24,
+      "kernel_bytes_sent": 666,
+      "kernel_bytes_recv": 930,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 78,
+      "app_latency_ms": 2.0482540130615234,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 79,
+      "app_latency_ms": 2.1872520446777344,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 80,
+      "app_latency_ms": 1.9903182983398438,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 81,
+      "app_latency_ms": 1.7650127410888672,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 82,
+      "app_latency_ms": 1.920938491821289,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 83,
+      "app_latency_ms": 2.1009445190429688,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 84,
+      "app_latency_ms": 2.0487308502197266,
+      "app_status_code": 200,
+      "kernel_events_count": 24,
+      "kernel_bytes_sent": 770,
+      "kernel_bytes_recv": 586,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 85,
+      "app_latency_ms": 1.9512176513671875,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 86,
+      "app_latency_ms": 2.132415771484375,
+      "app_status_code": 200,
+      "kernel_events_count": 52,
+      "kernel_bytes_sent": 3042,
+      "kernel_bytes_recv": 2658,
+      "discrepancy_detected": true,
+      "discrepancy_reason": "App reports 2.13ms latency but kernel shows 46 send/recv events \u2014 hidden fragmentation or inefficiency"
+    },
+    {
+      "request_id": 87,
+      "app_latency_ms": 2.2821426391601562,
+      "app_status_code": 200,
+      "kernel_events_count": 30,
+      "kernel_bytes_sent": 954,
+      "kernel_bytes_recv": 970,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 88,
+      "app_latency_ms": 2.1386146545410156,
+      "app_status_code": 200,
+      "kernel_events_count": 24,
+      "kernel_bytes_sent": 766,
+      "kernel_bytes_recv": 582,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 89,
+      "app_latency_ms": 1.9109249114990234,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 90,
+      "app_latency_ms": 1.8808841705322266,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 91,
+      "app_latency_ms": 2.004861831665039,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 92,
+      "app_latency_ms": 2.1927356719970703,
+      "app_status_code": 200,
+      "kernel_events_count": 16,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 93,
+      "app_latency_ms": 2.041339874267578,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 94,
+      "app_latency_ms": 1.9540786743164062,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 95,
+      "app_latency_ms": 1.9059181213378906,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 96,
+      "app_latency_ms": 2.197742462158203,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 97,
+      "app_latency_ms": 2.1605491638183594,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 98,
+      "app_latency_ms": 1.9154548645019531,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 99,
+      "app_latency_ms": 2.080202102661133,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    },
+    {
+      "request_id": 100,
+      "app_latency_ms": 2.1407604217529297,
+      "app_status_code": 200,
+      "kernel_events_count": 18,
+      "kernel_bytes_sent": 480,
+      "kernel_bytes_recv": 480,
+      "discrepancy_detected": false,
+      "discrepancy_reason": null
+    }
+  ]
+}
