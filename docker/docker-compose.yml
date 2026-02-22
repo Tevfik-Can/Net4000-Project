@@ -43,7 +43,7 @@ services:
       - ../results:/app/results
       - ../src:/app/src
     working_dir: /app
-    command: python3 src/correlation/correlator.py --app-metrics ./results/test_output.json --ebpf-events ./results/test_output.json --output ./results/correlations.json --time-window 50
+    command: python3 src/correlation/correlator.py --app-metrics ./results/test_output.json --ebpf-events ./results/test_output.json --output ./results/correlations.json --time-window 50 --debug
     depends_on:
       cross-layer-test:
         condition: service_completed_successfully
@@ -57,7 +57,7 @@ services:
       - ../results:/app/results
       - ../src:/app/src
     working_dir: /app
-    command: python3 src/correlation/analyzer.py --correlations ./results/correlations.json --baseline ./results/app_metrics_baseline.json --output ./results/comparison_report.json
+    command: python3 src/correlation/analyzer.py --correlations ./results/correlations.json --baseline ./results/test_output.json --output ./results/comparison_report.json
     depends_on:
       correlator:
         condition: service_completed_successfully
