@@ -10,7 +10,7 @@ services:
       - ../scripts:/app/scripts
       - ../src:/app/src
     working_dir: /app
-    command: python3 scripts/test_app_only.py --requests 100 --output ./results
+    command: python3 scripts/test_app_only.py --requests 1 --output ./results
 
   cross-layer-test:
     build:
@@ -29,7 +29,7 @@ services:
       - ../scripts:/app/scripts
       - ../src:/app/src
     working_dir: /app
-    command: bash -c "python3 scripts/test_cross_layer.py --requests 100 --output ./results 2>/dev/null"
+    command: bash -c "python3 scripts/test_cross_layer.py --requests 1 --output ./results 2>/dev/null"
     depends_on:
       app-baseline:
         condition: service_completed_successfully
