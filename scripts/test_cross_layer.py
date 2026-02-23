@@ -419,7 +419,7 @@ def run_test(num_requests=10, output_dir='./results/cross_layer'):
     
     print(f"\nOutput files:")
     print(f"  Combined:   {combined_file}")
-    # print(f"  App only:   {app_file}")
+    print(f"  App only:   {app_file}")
     # print(f"  eBPF only:  {ebpf_file}")
     # print(f"  Blindspots: {blindspots_file}")
     

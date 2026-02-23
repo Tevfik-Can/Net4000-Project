@@ -110,8 +110,14 @@ class PerformanceAnalyzer:
     
     def load_app_metrics(self, filepath: str) -> List[Dict]:
         """Load application metrics for baseline comparison."""
+        if filepath.endswith("test_output.json"):
+            with open(filepath, 'r') as f:
+                data = json.load(f)
+                return data.get("application_metrics", [])
+
         with open(filepath, 'r') as f:
             return json.load(f)
+        
     
     def analyze_correlations(self, correlation_data: Dict):
         """
