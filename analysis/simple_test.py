@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import os
 import time
 import threading
 import requests
@@ -6,182 +7,416 @@ import json
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from bcc import BPF
 
-# -------------------------------
-# eBPF program (TCP events)
-# -------------------------------
-bpf_program = """
+bpf_program = r"""
 #include <uapi/linux/ptrace.h>
 #include <linux/sched.h>
+#include <linux/in.h>
 #include <bcc/proto.h>
 
-#define EVT_CONNECT 1
-#define EVT_SEND    2
-#define EVT_RECV    3
-#define EVT_CLOSE   4
+#define TASK_COMM_LEN 16
 
-struct net_event_t {
+#define K_SYSCALL_SEND   10
+#define K_SYSCALL_RECV   11
+#define K_SYSCALL_CONN   12
+#define K_SYSCALL_CLOSE  13
+
+#define K_TCP_SEND       20
+#define K_TCP_RECV       21
+#define K_TCP_CONN       22
+#define K_TCP_CLOSE      23
+
+#define K_SOFTIRQ_NET_RX 30
+#define K_SOFTIRQ_NET_TX 31
+
+#define K_MARK_NETDEV_Q  40
+#define K_MARK_NETDEV_X  41
+
+#define NET_TX_SOFTIRQ   2
+#define NET_RX_SOFTIRQ   3
+
+struct lat_event_t {
     u64 ts_ns;
+    u64 dur_ns;
     u32 pid;
-    u32 ppid;
+    u32 tid;
     u32 bytes;
-    u8  event_type;
+    u16 kind;
     char comm[TASK_COMM_LEN];
 };
 
 BPF_PERF_OUTPUT(events);
 
-static __always_inline int submit_event(
-    struct pt_regs *ctx,
-    u8 event_type,
-    u32 bytes
-) {
-    struct net_event_t e = {};
-    struct task_struct *task;
+BPF_HASH(start_sys_send,   u32, u64);
+BPF_HASH(start_sys_recv,   u32, u64);
+BPF_HASH(start_sys_conn,   u32, u64);
+BPF_HASH(start_sys_close,  u32, u64);
 
-    e.ts_ns = bpf_ktime_get_ns();
-    e.pid = bpf_get_current_pid_tgid() >> 32;
+BPF_HASH(start_tcp_send,   u32, u64);
+BPF_HASH(start_tcp_recv,   u32, u64);
+BPF_HASH(start_tcp_conn,   u32, u64);
+BPF_HASH(start_tcp_close,  u32, u64);
 
-    task = (struct task_struct *)bpf_get_current_task();
-    e.ppid = task->real_parent->tgid;
+BPF_HASH(start_softirq,    u32, u64);
 
+static __always_inline void emit_lat_kprobe(struct pt_regs *ctx, u16 kind, u64 start_ns, u32 bytes) {
+    struct lat_event_t e = {};
+    u64 now = bpf_ktime_get_ns();
+    u64 pid_tgid = bpf_get_current_pid_tgid();
+
+    e.ts_ns = now;
+    e.dur_ns = start_ns ? now - start_ns : 0;
+    e.pid = pid_tgid >> 32;
+    e.tid = (u32)pid_tgid;
     e.bytes = bytes;
-    e.event_type = event_type;
+    e.kind = kind;
     bpf_get_current_comm(&e.comm, sizeof(e.comm));
 
     events.perf_submit(ctx, &e, sizeof(e));
+}
+
+static __always_inline void emit_lat_tp(void *args, u16 kind, u64 start_ns, u32 bytes) {
+    struct lat_event_t e = {};
+    u64 now = bpf_ktime_get_ns();
+    u64 pid_tgid = bpf_get_current_pid_tgid();
+
+    e.ts_ns = now;
+    e.dur_ns = start_ns ? now - start_ns : 0;
+    e.pid = pid_tgid >> 32;
+    e.tid = (u32)pid_tgid;
+    e.bytes = bytes;
+    e.kind = kind;
+    bpf_get_current_comm(&e.comm, sizeof(e.comm));
+
+    events.perf_submit(args, &e, sizeof(e));
+}
+
+TRACEPOINT_PROBE(syscalls, sys_enter_sendto) {
+    u32 tid = (u32)bpf_get_current_pid_tgid();
+    u64 ts = bpf_ktime_get_ns();
+    start_sys_send.update(&tid, &ts);
+    return 0;
+}
+TRACEPOINT_PROBE(syscalls, sys_exit_sendto) {
+    u32 tid = (u32)bpf_get_current_pid_tgid();
+    u64 *tsp = start_sys_send.lookup(&tid);
+    if (!tsp) return 0;
+    long ret = args->ret;
+    emit_lat_tp(args, K_SYSCALL_SEND, *tsp, ret > 0 ? ret : 0);
+    start_sys_send.delete(&tid);
     return 0;
 }
 
-int kprobe__tcp_v4_connect(struct pt_regs *ctx) { return submit_event(ctx, EVT_CONNECT, 0); }
-int kprobe__tcp_sendmsg(struct pt_regs *ctx)   { u32 size = (u32)PT_REGS_PARM3(ctx); return submit_event(ctx, EVT_SEND, size); }
-int kprobe__tcp_recvmsg(struct pt_regs *ctx)   { u32 size = (u32)PT_REGS_PARM3(ctx); return submit_event(ctx, EVT_RECV, size); }
-int kprobe__tcp_close(struct pt_regs *ctx)     { return submit_event(ctx, EVT_CLOSE, 0); }
-"""
-
-# Mapping numeric codes to human-readable words
-EVENT_TYPE_MAP = {
-    1: "connect",
-    2: "send",
-    3: "recv",
-    4: "close"
+TRACEPOINT_PROBE(syscalls, sys_enter_recvfrom) {
+    u32 tid = (u32)bpf_get_current_pid_tgid();
+    u64 ts = bpf_ktime_get_ns();
+    start_sys_recv.update(&tid, &ts);
+    return 0;
+}
+TRACEPOINT_PROBE(syscalls, sys_exit_recvfrom) {
+    u32 tid = (u32)bpf_get_current_pid_tgid();
+    u64 *tsp = start_sys_recv.lookup(&tid);
+    if (!tsp) return 0;
+    long ret = args->ret;
+    emit_lat_tp(args, K_SYSCALL_RECV, *tsp, ret > 0 ? ret : 0);
+    start_sys_recv.delete(&tid);
+    return 0;
 }
 
-# -------------------------------
-# HTTP Server
-# -------------------------------
-def run_server():
-    class Handler(BaseHTTPRequestHandler):
-        def do_GET(self):
-            self.send_response(200)
-            self.end_headers()
-            self.wfile.write(b"OK")
-        def log_message(self, *args): pass
+TRACEPOINT_PROBE(syscalls, sys_enter_connect) {
+    u32 tid = (u32)bpf_get_current_pid_tgid();
+    u64 ts = bpf_ktime_get_ns();
+    start_sys_conn.update(&tid, &ts);
+    return 0;
+}
+TRACEPOINT_PROBE(syscalls, sys_exit_connect) {
+    u32 tid = (u32)bpf_get_current_pid_tgid();
+    u64 *tsp = start_sys_conn.lookup(&tid);
+    if (!tsp) return 0;
+    emit_lat_tp(args, K_SYSCALL_CONN, *tsp, 0);
+    start_sys_conn.delete(&tid);
+    return 0;
+}
 
+TRACEPOINT_PROBE(syscalls, sys_enter_close) {
+    u32 tid = (u32)bpf_get_current_pid_tgid();
+    u64 ts = bpf_ktime_get_ns();
+    start_sys_close.update(&tid, &ts);
+    return 0;
+}
+TRACEPOINT_PROBE(syscalls, sys_exit_close) {
+    u32 tid = (u32)bpf_get_current_pid_tgid();
+    u64 *tsp = start_sys_close.lookup(&tid);
+    if (!tsp) return 0;
+    emit_lat_tp(args, K_SYSCALL_CLOSE, *tsp, 0);
+    start_sys_close.delete(&tid);
+    return 0;
+}
+
+int kprobe__tcp_sendmsg(struct pt_regs *ctx) {
+    u32 tid = (u32)bpf_get_current_pid_tgid();
+    u64 ts = bpf_ktime_get_ns();
+    start_tcp_send.update(&tid, &ts);
+    return 0;
+}
+int kretprobe__tcp_sendmsg(struct pt_regs *ctx) {
+    u32 tid = (u32)bpf_get_current_pid_tgid();
+    u64 *tsp = start_tcp_send.lookup(&tid);
+    if (!tsp) return 0;
+    long ret = PT_REGS_RC(ctx);
+    emit_lat_kprobe(ctx, K_TCP_SEND, *tsp, ret > 0 ? ret : 0);
+    start_tcp_send.delete(&tid);
+    return 0;
+}
+
+int kprobe__tcp_recvmsg(struct pt_regs *ctx) {
+    u32 tid = (u32)bpf_get_current_pid_tgid();
+    u64 ts = bpf_ktime_get_ns();
+    start_tcp_recv.update(&tid, &ts);
+    return 0;
+}
+int kretprobe__tcp_recvmsg(struct pt_regs *ctx) {
+    u32 tid = (u32)bpf_get_current_pid_tgid();
+    u64 *tsp = start_tcp_recv.lookup(&tid);
+    if (!tsp) return 0;
+    long ret = PT_REGS_RC(ctx);
+    emit_lat_kprobe(ctx, K_TCP_RECV, *tsp, ret > 0 ? ret : 0);
+    start_tcp_recv.delete(&tid);
+    return 0;
+}
+
+int kprobe__tcp_v4_connect(struct pt_regs *ctx) {
+    u32 tid = (u32)bpf_get_current_pid_tgid();
+    u64 ts = bpf_ktime_get_ns();
+    start_tcp_conn.update(&tid, &ts);
+    return 0;
+}
+int kretprobe__tcp_v4_connect(struct pt_regs *ctx) {
+    u32 tid = (u32)bpf_get_current_pid_tgid();
+    u64 *tsp = start_tcp_conn.lookup(&tid);
+    if (!tsp) return 0;
+    emit_lat_kprobe(ctx, K_TCP_CONN, *tsp, 0);
+    start_tcp_conn.delete(&tid);
+    return 0;
+}
+
+int kprobe__tcp_close(struct pt_regs *ctx) {
+    u32 tid = (u32)bpf_get_current_pid_tgid();
+    u64 ts = bpf_ktime_get_ns();
+    start_tcp_close.update(&tid, &ts);
+    return 0;
+}
+int kretprobe__tcp_close(struct pt_regs *ctx) {
+    u32 tid = (u32)bpf_get_current_pid_tgid();
+    u64 *tsp = start_tcp_close.lookup(&tid);
+    if (!tsp) return 0;
+    emit_lat_kprobe(ctx, K_TCP_CLOSE, *tsp, 0);
+    start_tcp_close.delete(&tid);
+    return 0;
+}
+
+TRACEPOINT_PROBE(irq, softirq_entry) {
+    u32 vec = args->vec;
+    if (vec != NET_RX_SOFTIRQ && vec != NET_TX_SOFTIRQ) return 0;
+    u64 ts = bpf_ktime_get_ns();
+    start_softirq.update(&vec, &ts);
+    return 0;
+}
+TRACEPOINT_PROBE(irq, softirq_exit) {
+    u32 vec = args->vec;
+    if (vec != NET_RX_SOFTIRQ && vec != NET_TX_SOFTIRQ) return 0;
+    u64 *tsp = start_softirq.lookup(&vec);
+    if (!tsp) return 0;
+    emit_lat_tp(args, vec == NET_RX_SOFTIRQ ? K_SOFTIRQ_NET_RX : K_SOFTIRQ_NET_TX, *tsp, 0);
+    start_softirq.delete(&vec);
+    return 0;
+}
+
+TRACEPOINT_PROBE(net, net_dev_queue) {
+    emit_lat_tp(args, K_MARK_NETDEV_Q, 0, args->len);
+    return 0;
+}
+TRACEPOINT_PROBE(net, net_dev_xmit) {
+    emit_lat_tp(args, K_MARK_NETDEV_X, 0, args->len);
+    return 0;
+}
+"""
+
+KIND_LABEL = {
+    10: "syscall_send",
+    11: "syscall_recv",
+    12: "syscall_connect",
+    13: "syscall_close",
+    20: "tcp_sendmsg",
+    21: "tcp_recvmsg",
+    22: "tcp_v4_connect",
+    23: "tcp_close",
+    30: "softirq_net_rx",
+    31: "softirq_net_tx",
+    40: "net_dev_queue",
+    41: "net_dev_xmit",
+}
+
+class Handler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.end_headers()
+        self.wfile.write(b"OK")
+    def log_message(self, *args):
+        pass
+
+def run_server():
     server = HTTPServer(("127.0.0.1", 8080), Handler)
     threading.Thread(target=server.serve_forever, daemon=True).start()
     return server
 
-# -------------------------------
-# Client Requests
-# -------------------------------
-def run_client_requests(num_requests=10):
-    metrics = []
-    for i in range(num_requests):
-        start = time.time()
+def run_client_requests(n=10, force_close=True):
+    out = []
+    for i in range(n):
+        s = time.monotonic_ns()
+        headers = {"Connection": "close"} if force_close else {}
         try:
-            r = requests.get("http://127.0.0.1:8080", timeout=2)
-            latency = (time.time() - start) * 1000
-            metrics.append({
+            r = requests.get("http://127.0.0.1:8080", timeout=2, headers=headers)
+            e = time.monotonic_ns()
+            out.append({
                 "request_id": i + 1,
-                "latency_ms": latency,
+                "start_ns": s,
+                "end_ns": e,
+                "latency_ms": (e - s) / 1e6,
                 "status_code": r.status_code,
                 "success": r.status_code == 200
             })
-        except Exception as e:
-            latency = (time.time() - start) * 1000
-            metrics.append({
+        except Exception as ex:
+            e = time.monotonic_ns()
+            out.append({
                 "request_id": i + 1,
-                "latency_ms": latency,
+                "start_ns": s,
+                "end_ns": e,
+                "latency_ms": (e - s) / 1e6,
                 "status_code": None,
                 "success": False,
-                "error": str(e)
+                "error": str(ex)
             })
         time.sleep(0.1)
-    return metrics
+    return out
 
-# -------------------------------
-# Main
-# -------------------------------
 def main():
     print("=== Starting HTTP Server ===")
     server = run_server()
-    time.sleep(1)  # let server start
+    time.sleep(1)
 
     print("=== Loading eBPF program ===")
-    b = BPF(text=bpf_program, debug=0)  # suppress warnings
+    b = BPF(text=bpf_program, debug=0)
+    pid = os.getpid()
 
-    # Collect eBPF events
-    ebpf_events = []
+    raw_events = []
+    lock = threading.Lock()
 
-    def handle_event(cpu, data, size):
+    def handle(cpu, data, size):
         e = b["events"].event(data)
-        ebpf_events.append({
-            "timestamp_ns": e.ts_ns,
-            "pid": e.pid,
-            "ppid": e.ppid,
-            "bytes": e.bytes,
-            "event_type": EVENT_TYPE_MAP.get(e.event_type, "unknown"),
-            "comm": e.comm.decode(errors="replace")
-        })
+        ev = {
+            "timestamp_ns": int(e.ts_ns),
+            "dur_ns": int(e.dur_ns),
+            "pid": int(e.pid),
+            "kind": int(e.kind),
+            "kind_str": KIND_LABEL.get(int(e.kind), f"kind_{int(e.kind)}"),
+        }
+        with lock:
+            raw_events.append(ev)
 
-    b["events"].open_perf_buffer(handle_event)
+    b["events"].open_perf_buffer(handle, page_cnt=256)
 
-    # BPF polling thread
-    stop_bpf = False
-    def poll_bpf():
-        while not stop_bpf:
-            b.perf_buffer_poll(timeout=100)
+    stop = False
+    def poll():
+        while not stop:
+            b.perf_buffer_poll(timeout=50)
 
-    t = threading.Thread(target=poll_bpf)
+    t = threading.Thread(target=poll, daemon=True)
     t.start()
 
-    # Send HTTP requests
     print("=== Sending HTTP requests ===")
-    request_metrics = run_client_requests(num_requests=10)
+    reqs = run_client_requests(n=10, force_close=True)
 
-    # Give BPF a short moment to catch remaining events
     time.sleep(0.5)
-    stop_bpf = True
-    t.join()
+    stop = True
+    t.join(timeout=2)
 
-    # Shutdown server
     server.shutdown()
     server.server_close()
 
-    # Compute average latency
-    avg_latency = sum(m["latency_ms"] for m in request_metrics) / len(request_metrics)
+    with lock:
+        snap = list(raw_events)
 
-    # Save results
-    output = {
-        "application_metrics": request_metrics,
-        "ebpf_events": ebpf_events,
+    for r in reqs:
+        r["kernel_breakdown_ns"] = {}
+        r["kernel_counts"] = {}
+
+        for ev in snap:
+            if not (r["start_ns"] <= ev["timestamp_ns"] <= r["end_ns"]):
+                continue
+
+            is_context = ev["kind"] in (30, 31, 40, 41)
+            if not is_context and ev["pid"] != pid:
+                continue
+
+            k = ev["kind_str"]
+            r["kernel_breakdown_ns"][k] = r["kernel_breakdown_ns"].get(k, 0) + ev["dur_ns"]
+            r["kernel_counts"][k] = r["kernel_counts"].get(k, 0) + 1
+
+        r["kernel_breakdown_ms"] = {k: v / 1e6 for k, v in r["kernel_breakdown_ns"].items()}
+
+        r["views_ms"] = {
+            "app_latency_ms": r["latency_ms"],
+            "syscall_total_ms": (
+                r["kernel_breakdown_ns"].get("syscall_send", 0)
+                + r["kernel_breakdown_ns"].get("syscall_recv", 0)
+                + r["kernel_breakdown_ns"].get("syscall_connect", 0)
+                + r["kernel_breakdown_ns"].get("syscall_close", 0)
+            ) / 1e6,
+            "tcp_funcs_total_ms": (
+                r["kernel_breakdown_ns"].get("tcp_sendmsg", 0)
+                + r["kernel_breakdown_ns"].get("tcp_recvmsg", 0)
+                + r["kernel_breakdown_ns"].get("tcp_v4_connect", 0)
+                + r["kernel_breakdown_ns"].get("tcp_close", 0)
+            ) / 1e6,
+            "softirq_total_ms": (
+                r["kernel_breakdown_ns"].get("softirq_net_rx", 0)
+                + r["kernel_breakdown_ns"].get("softirq_net_tx", 0)
+            ) / 1e6,
+        }
+
+    avg_latency = sum(r["latency_ms"] for r in reqs) / len(reqs)
+    success_count = sum(1 for r in reqs if r.get("success"))
+
+    out = {
+        "application_metrics": reqs,
         "summary": {
-            "total_requests": len(request_metrics),
-            "successful_requests": len([m for m in request_metrics if m["success"]]),
+            "total_requests": len(reqs),
+            "successful_requests": success_count,
             "avg_latency_ms": avg_latency,
-            "total_ebpf_events": len(ebpf_events)
+            "total_ebpf_events": len(snap)
         }
     }
 
     with open("tcp_events_output.json", "w") as f:
-        json.dump(output, f, indent=2)
+        json.dump(out, f, indent=2)
 
     print("\n=== Summary ===")
-    print(f"HTTP requests sent: {len(request_metrics)}")
-    print(f"Successful requests: {len([m for m in request_metrics if m['success']])}")
+    print(f"HTTP requests sent: {len(reqs)}")
+    print(f"Successful requests: {success_count}")
     print(f"Average latency: {avg_latency:.2f} ms")
-    print(f"TCP events captured by eBPF: {len(ebpf_events)}")
-    print("Detailed events exported to tcp_events_output.json")
+    print(f"Kernel events captured by eBPF: {len(snap)}")
+    print("Detailed results exported to tcp_events_output.json")
+
+    print("\n=== Per-request breakdown (ms) ===")
+    for r in reqs:
+        v = r.get("views_ms", {})
+        print(
+            f"Req {r['request_id']:02d}: "
+            f"app={v.get('app_latency_ms',0):7.3f} | "
+            f"syscall={v.get('syscall_total_ms',0):7.3f} | "
+            f"tcp={v.get('tcp_funcs_total_ms',0):7.3f} | "
+            f"softirq={v.get('softirq_total_ms',0):7.3f}"
+        )
 
 if __name__ == "__main__":
     main()
